@@ -11,7 +11,7 @@ Configures simultaneous AP and Managed Mode Wifi on Raspberry Pi
 
 USAGE:
     rpi-wifi -a <ap_ssid> [<ap_password>] -c <client_password> [<client_password>]
-    
+
     rpi-wifi -a MyAP myappass -c MyWifiSSID mywifipass
 
 PARAMETERS:
@@ -151,8 +151,9 @@ iface ap0 inet static
     hostapd /etc/hostapd/hostapd.conf
 
 allow-hotplug wlan0
-iface wlan0 inet dhcp
+iface wlan0 inet manual
     wpa-roam /etc/wpa_supplicant/wpa_supplicant.conf
+iface AP1 inet dhcp
 EOF
 
 # Populate `/bin/start_wifi.sh`
