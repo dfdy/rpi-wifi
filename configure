@@ -123,7 +123,7 @@ EOF
 # Populate `/etc/wpa_supplicant/wpa_supplicant.conf`
 if [ $CLIENT_SSID ]; then
 sudo bash -c 'cat > /etc/wpa_supplicant/wpa_supplicant.conf' << EOF
-country=US
+country=SE
 ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
 update_config=1
 
