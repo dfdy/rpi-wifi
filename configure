@@ -161,14 +161,17 @@ EOF
 sudo bash -c 'cat > /bin/rpi-wifi.sh' << EOF
 echo 'Starting Wifi AP and client...'
 
+echo 'Sleeping for 30 seconds'
+sleep 30
+
 echo 'ifdown wlan0'
 sudo ifdown --force wlan0
 
 echo 'ifdown ap0'
 sudo ifdown --force ap0
 
-echo 'Sleeping for 30 seconds'
-sleep 30
+echo 'Sleeping for 5 seconds'
+sleep 5
 
 echo 'ifup wlan0'
 sudo ifup wlan0
