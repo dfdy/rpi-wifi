@@ -123,11 +123,12 @@ EOF
 # Populate `/etc/wpa_supplicant/wpa_supplicant.conf`
 if [ $CLIENT_SSID ]; then
 sudo bash -c 'cat > /etc/wpa_supplicant/wpa_supplicant.conf' << EOF
-country=US
+country=SE
 ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
 update_config=1
 
 network={
+	scan_ssid=1
     ssid="${CLIENT_SSID}"
     $([ $CLIENT_PASSPHRASE ] && echo "psk=\"${CLIENT_PASSPHRASE}\"")
     id_str="AP1"
@@ -159,14 +160,29 @@ EOF
 # Populate `/bin/start_wifi.sh`
 sudo bash -c 'cat > /bin/rpi-wifi.sh' << EOF
 echo 'Starting Wifi AP and client...'
-sleep 30
+
+echo 'ifdown wlan0'
 sudo ifdown --force wlan0
+
+echo 'ifdown ap0'
 sudo ifdown --force ap0
-sudo ifup ap0
+
+echo 'Sleeping for 30 seconds'
+sleep 30
+
+echo 'ifup wlan0'
 sudo ifup wlan0
+
+echo 'ifup ap0'
+sudo ifup ap0
+
+echo 'Enabling internet access.'
 sudo sysctl -w net.ipv4.ip_forward=1
 sudo iptables -t nat -A POSTROUTING -s ${AP_IP_BEGIN}.0/24 ! -d ${AP_IP_BEGIN}.0/24 -j MASQUERADE
+
+echo 'Restarting dnsmacq and hostapd.'
 sudo systemctl restart dnsmasq
+sudo systemctl restart hostapd
 EOF
 sudo chmod +x /bin/rpi-wifi.sh
 
@@ -186,7 +202,8 @@ sudo chmod +x /bin/rpi-wifi.sh
 # EOF
 # sudo systemctl daemon-reload
 # sudo systemctl enable rpi-wifi.service
-crontab -l | { cat; echo "@reboot /bin/rpi-wifi.sh"; } | crontab -
-
+crontab -l | { cat; echo "@reboot /bin/rpi-wifi.sh >> /boot/logs/rpi-wifi.log 2>&1"; } | crontab -
+sudo mkdir /boot/logs
+sudo chmod 777 /boot/logs
 # Finish
 echo "Wifi configuration is finished! Please reboot your Raspberry Pi to apply changes..."
