@@ -172,11 +172,11 @@ sudo ifdown --force ap0
 echo 'Sleeping for 5 seconds'
 sleep 30
 
-echo 'ifup wlan0'
-sudo ifup wlan0
-
 echo 'ifup ap0'
 sudo ifup ap0
+
+echo 'ifup wlan0'
+sudo ifup wlan0
 
 echo 'Enabling internet access.'
 sudo sysctl -w net.ipv4.ip_forward=1
